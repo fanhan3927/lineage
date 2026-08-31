@@ -1,4 +1,4 @@
-import { motion, useReducedMotion, type Variants } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import type { Device } from '@/types/device'
 import { useI18n } from '@/i18n/I18nProvider'
 import { DeviceImage } from './DeviceImage'
@@ -6,24 +6,24 @@ import { DeviceImage } from './DeviceImage'
 interface DeviceCardProps {
   device: Device
   onSelect: (device: Device) => void
-  /** 用于网格 stagger 的序号（组内） */
+  /** 用于组内 stagger 的序号（每 8 张一个循环，避免长排队） */
   index?: number
 }
 
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 0.61, 0.36, 1] } },
-}
-
-/** 设备卡片：图 + 名称 + 年份 + 芯片一句话，点击打开详情 */
+/**
+ * 设备卡片：图 + 名称 + 年份 + 芯片一句话，点击打开详情。
+ * 每张卡独立 whileInView（once），reduced-motion 时只做 fade、不做位移。
+ */
 export function DeviceCard({ device, onSelect, index = 0 }: DeviceCardProps) {
-  const { t, locale } = useI18n()
+  const { t } = useI18n()
   const reduceMotion = useReducedMotion()
 
   return (
     <motion.li
-      variants={cardVariants}
-      transition={{ delay: reduceMotion ? 0 : (index % 8) * 0.03 }}
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '0px 0px -40px 0px' }}
+      transition={{ duration: 0.55, ease: [0.22, 0.61, 0.36, 1], delay: reduceMotion ? 0 : (index % 8) * 0.03 }}
       className="list-none"
     >
       <button
@@ -52,9 +52,7 @@ export function DeviceCard({ device, onSelect, index = 0 }: DeviceCardProps) {
         <p className="mt-1 text-xs text-sub">
           {device.year} · {device.chip}
         </p>
-        <p className="mt-0.5 text-xs text-sub/70" lang={locale === 'zh' ? 'zh-CN' : 'en'}>
-          {device.launchPriceUSD != null ? `$${device.launchPriceUSD}` : '—'}
-        </p>
+        <p className="mt-0.5 text-xs text-sub/70">{device.launchPriceUSD != null ? `$${device.launchPriceUSD}` : '—'}</p>
       </button>
     </motion.li>
   )

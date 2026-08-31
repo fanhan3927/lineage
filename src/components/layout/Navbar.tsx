@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useI18n } from '@/i18n/I18nProvider'
 import { LanguageSwitch } from '@/i18n/LanguageSwitch'
 
@@ -11,9 +11,31 @@ const NAV_ITEMS = [
   { id: 'specs', key: 'nav.specs' },
 ] as const
 
+/** Navbar：锚点导航 + 当前段高亮（IntersectionObserver）+ 语言切换 + 移动端折叠 */
 export function Navbar() {
   const { t } = useI18n()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [activeId, setActiveId] = useState<string>('overview')
+
+  // 滚动侦测：视口中带（40%–60% 高度区间）命中的 section 视为当前段
+  useEffect(() => {
+    const sections = NAV_ITEMS.map((item) => document.getElementById(item.id)).filter(
+      (element): element is HTMLElement => element !== null,
+    )
+    if (sections.length === 0) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id)
+          }
+        }
+      },
+      { rootMargin: '-40% 0px -55% 0px', threshold: 0 },
+    )
+    sections.forEach((section) => observer.observe(section))
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-black/5 bg-white/70 backdrop-blur-xl backdrop-saturate-150">
@@ -25,16 +47,22 @@ export function Navbar() {
 
         {/* 桌面端：锚点 + 语言切换 */}
         <div className="hidden items-center gap-7 md:flex">
-          {NAV_ITEMS.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              data-nav-target={item.id}
-              className="text-xs text-ink/80 transition-colors hover:text-ink"
-            >
-              {t(item.key)}
-            </a>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const active = activeId === item.id
+            return (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                data-nav-target={item.id}
+                aria-current={active ? 'true' : undefined}
+                className={`text-xs transition-colors duration-200 ${
+                  active ? 'font-semibold text-ink' : 'text-ink/60 hover:text-ink'
+                }`}
+              >
+                {t(item.key)}
+              </a>
+            )
+          })}
           <LanguageSwitch />
         </div>
 
@@ -67,7 +95,7 @@ export function Navbar() {
                 key={item.id}
                 href={`#${item.id}`}
                 onClick={() => setMenuOpen(false)}
-                className="block py-2.5 text-sm text-ink/90"
+                className={`block py-2.5 text-sm ${activeId === item.id ? 'font-semibold text-ink' : 'text-ink/80'}`}
               >
                 {t(item.key)}
               </a>
