@@ -6,6 +6,7 @@ import { GallerySection } from '@/components/gallery/GallerySection'
 import { MilestoneSection } from '@/components/milestones/MilestoneSection'
 import { PriceChart } from '@/components/charts/PriceChart'
 import { ChipChart } from '@/components/charts/ChipChart'
+import { SpecTable } from '@/components/table/SpecTable'
 
 export default function App() {
   return (
@@ -13,12 +14,13 @@ export default function App() {
       <div className="min-h-screen bg-page text-ink">
         <Navbar />
         <main>
-          {/* 页面信息架构：Hero → Gallery → Milestones → Price → Chips →（步骤 7）Specs */}
+          {/* 页面信息架构：Hero → Gallery → Milestones → Price → Chips → Specs → Footer */}
           <Hero />
           <GallerySection />
           <MilestoneSection />
           <PriceChart />
           <ChipChart />
+          <SpecTable />
         </main>
         <Footer />
       </div>
