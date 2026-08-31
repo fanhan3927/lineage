@@ -5,6 +5,7 @@ import { Hero } from '@/components/hero/Hero'
 import { GallerySection } from '@/components/gallery/GallerySection'
 import { MilestoneSection } from '@/components/milestones/MilestoneSection'
 import { PriceChart } from '@/components/charts/PriceChart'
+import { ChipChart } from '@/components/charts/ChipChart'
 
 export default function App() {
   return (
@@ -12,11 +13,12 @@ export default function App() {
       <div className="min-h-screen bg-page text-ink">
         <Navbar />
         <main>
-          {/* 页面信息架构：Hero → Gallery → Milestones → Price →（步骤 6–7）Chips / Specs */}
+          {/* 页面信息架构：Hero → Gallery → Milestones → Price → Chips →（步骤 7）Specs */}
           <Hero />
           <GallerySection />
           <MilestoneSection />
           <PriceChart />
+          <ChipChart />
         </main>
         <Footer />
       </div>
