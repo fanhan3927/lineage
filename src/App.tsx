@@ -3,6 +3,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { Hero } from '@/components/hero/Hero'
 import { GallerySection } from '@/components/gallery/GallerySection'
+import { MilestoneSection } from '@/components/milestones/MilestoneSection'
 
 export default function App() {
   return (
@@ -10,9 +11,10 @@ export default function App() {
       <div className="min-h-screen bg-page text-ink">
         <Navbar />
         <main>
-          {/* 依次：Hero → Gallery →（步骤 4–7 接入）Milestones / PriceChart / ChipChart / SpecTable */}
+          {/* 页面信息架构：Hero → Gallery → Milestones →（步骤 5–7 接入）Price / Chips / Specs */}
           <Hero />
           <GallerySection />
+          <MilestoneSection />
         </main>
         <Footer />
       </div>
