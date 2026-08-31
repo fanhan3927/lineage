@@ -97,11 +97,26 @@ iPad 同理（`ipads.ts`，不同屏幕尺寸分开条目）。
 
 ## 部署
 
+### GitHub Pages（已配置，自动部署）
+
+仓库带 `.github/workflows/deploy.yml`：推送到 `main` 即自动构建并发布到 GitHub Pages。
+
+- 线上地址：`https://fanhan3927.github.io/lineage/`
+- 项目站位于 `/lineage/` 子路径：CI 构建时注入 `VITE_BASE=/lineage/`
+  （`vite.config.ts` 读取该变量设置 `base`），设备图路径经 `import.meta.env.BASE_URL`
+  解析，子路径下不会 404
+- 首次启用：仓库 Settings → Pages → Source 选 **GitHub Actions**；
+  或用 `gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow`
+- 手动重部署：Actions 页面运行 **Deploy to GitHub Pages**（workflow_dispatch）
+
+### 其他平台
+
 `npm run build` 产物在 `dist/`，纯静态站点：
 
 - **Vercel**：框架选 Vite，构建命令 `npm run build`，输出目录 `dist`；
 - **Netlify**：构建命令同上，发布目录 `dist`；
-- `public/devices/` 下的图片会原样拷贝进 `dist/devices/`，相对路径 `/devices/*.png` 在两种平台均可直接使用。
+- `public/devices/` 下的图片会原样拷贝进 `dist/devices/`，根路径部署时相对路径
+  `/devices/*.png` 可直接使用；子路径部署时组件已按 `base` 自动解析。
 
 ## 无障碍与动效
 
