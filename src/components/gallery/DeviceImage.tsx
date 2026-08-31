@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { Device } from '@/types/device'
 import { DeviceSilhouette } from './DeviceSilhouette'
+import deviceImageFiles from 'virtual:device-images'
 
 interface DeviceImageProps {
   device: Device
@@ -9,12 +10,8 @@ interface DeviceImageProps {
   eager?: boolean
 }
 
-/**
- * 图片可用性缓存（模块级）：probe 阶段用 HEAD 请求探测设备图是否存在。
- * 存在才挂载 <img>，不存在直接渲染 SVG 剪影 —— 避免浏览器对缺失图片打出 404 资源错误。
- * 缓存与探测统一使用「解析后」的完整路径（含 Vite base），子路径部署下同样命中缓存。
- */
-const imageAvailability = new Map<string, boolean>()
+/** 构建期清单：public/devices/ 下实际存在的图片文件名（见 vite.config.ts 插件） */
+const availableImages = new Set(deviceImageFiles)
 
 /** 解析设备图地址：拼接 Vite base，兼容 GitHub Pages 项目站子路径（如 /lineage/） */
 function resolveImageSrc(image: string): string {
@@ -22,44 +19,16 @@ function resolveImageSrc(image: string): string {
 }
 
 /**
- * 设备图片：优先 /devices/{slug}.png；缺失或加载失败回退 SVG 剪影，绝不裂图。
+ * 设备图片：按构建期清单决定渲染 <img> 还是 SVG 剪影 ——
+ * 无图的站点不发出任何图片请求（控制台零 404）；清单误判时由 onError 兜底切回剪影，绝不裂图。
  * 默认懒加载（performance 规范）。
  */
 export function DeviceImage({ device, className, eager = false }: DeviceImageProps) {
   const imageSrc = resolveImageSrc(device.image)
-  const [status, setStatus] = useState<'probe' | 'ok' | 'missing'>(() => {
-    const known = imageAvailability.get(imageSrc)
-    return known === true ? 'ok' : known === false ? 'missing' : 'probe'
-  })
+  const fileName = device.image.replace(/^\/devices\//, '')
+  const [failed, setFailed] = useState(false)
 
-  useEffect(() => {
-    const known = imageAvailability.get(imageSrc)
-    if (known !== undefined) {
-      setStatus(known ? 'ok' : 'missing')
-      return
-    }
-    if (status !== 'probe') {
-      // 换到一张尚未探测过的图时，重新进入探测态
-      setStatus('probe')
-      return
-    }
-    let cancelled = false
-    fetch(imageSrc, { method: 'HEAD' })
-      .then((response) => {
-        const available = response.ok
-        imageAvailability.set(imageSrc, available)
-        if (!cancelled) setStatus(available ? 'ok' : 'missing')
-      })
-      .catch(() => {
-        imageAvailability.set(imageSrc, false)
-        if (!cancelled) setStatus('missing')
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [imageSrc, status])
-
-  if (status !== 'ok') {
+  if (!availableImages.has(fileName) || failed) {
     return (
       <DeviceSilhouette
         line={device.line}
@@ -77,10 +46,7 @@ export function DeviceImage({ device, className, eager = false }: DeviceImagePro
       loading={eager ? 'eager' : 'lazy'}
       decoding="async"
       draggable={false}
-      onError={() => {
-        imageAvailability.set(imageSrc, false)
-        setStatus('missing')
-      }}
+      onError={() => setFailed(true)}
       className={className}
     />
   )

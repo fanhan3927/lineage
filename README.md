@@ -92,8 +92,9 @@ iPad 同理（`ipads.ts`，不同屏幕尺寸分开条目）。
 - 电池：iPhone 统一 mAh（公开拆解口径），iPad 统一 Wh（官方标称口径），规格表下有注。
 - 芯片分数为公开第三方跑分（Geekbench 6 量级）的近似值，非 Apple 官方数据。
 - 文案（summary / notable / 里程碑说明）均为自撰短句，未复制 Apple 官网营销文案。
-- `public/devices/` 图片缺失时自动回退 SVG 剪影；如替换为官方新闻室图片，请自行确认授权，
-  勿热链 Apple CDN。
+- `public/devices/` 图片由构建期清单自动检测（vite 插件 `virtual:device-images`）：
+  无图机型自动回退 SVG 剪影，不会发 404 请求；新增图片后重新构建即生效
+  （dev 模式需重启 dev server）。如替换为官方新闻室图片，请自行确认授权，勿热链 Apple CDN。
 
 ## 部署
 
