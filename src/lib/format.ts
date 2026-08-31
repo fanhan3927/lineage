@@ -30,8 +30,10 @@ export function interpolate(template: string, vars: Record<string, string | numb
   )
 }
 
-/** 数字数组（内存/存储档位）→ '6 / 8 GB'；空数组显示 '—' */
+/** 数字数组（内存/存储档位）→ '6 / 8 GB'；小于 1GB 显示为 MB（0.128 → 128MB）；空数组显示 '—' */
 export function formatGBList(values: number[] | null | undefined): string {
   if (!values || values.length === 0) return '—'
-  return values.map((v) => (v >= 1024 ? `${v / 1024}TB` : `${v}GB`)).join(' / ')
+  return values
+    .map((v) => (v < 1 ? `${Math.round(v * 1000)}MB` : v >= 1024 ? `${v / 1024}TB` : `${v}GB`))
+    .join(' / ')
 }
