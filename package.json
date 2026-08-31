@@ -1,0 +1,27 @@
+{
+  "name": "lineage",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Lineage — 历代 iPhone 与 iPad 可视化站点（非官方粉丝向产品史）",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "framer-motion": "^11.18.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.15.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tailwindcss": "^4.1.11",
+    "typescript": "~5.6.2",
+    "vite": "^5.4.11"
+  }
+}

@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+/*
+ * Lineage 设计 Token（对齐 PRD / TECH_DESIGN 视觉规范）
+ * 浅色苹果风：背景 #f5f5f7、卡片 #ffffff、文字 #1d1d1f、强调 #0071e3
+ */
+@theme {
+  --color-page: #f5f5f7;
+  --color-card: #ffffff;
+  --color-ink: #1d1d1f;
+  --color-sub: #6e6e73;
+  --color-line: #d2d2d7;
+  --color-accent: #0071e3;
+  --color-link: #0066cc;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+    'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background-color: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgb(0 113 227 / 0.18);
+}
